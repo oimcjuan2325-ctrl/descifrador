@@ -1,0 +1,198 @@
+html_content = """<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descodificador Universal de Textos</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #1e293b;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+        h2 {
+            color: #38bdf8;
+            margin-top: 0;
+            border-left: 4px solid #38bdf8;
+            padding-left: 12px;
+            font-size: 24px;
+        }
+        p.hint {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+        textarea {
+            width: 100%;
+            padding: 14px;
+            margin-top: 8px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+            color: #f8fafc;
+            resize: vertical;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        button {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #0369a1; }
+        .results-section {
+            margin-top: 25px;
+        }
+        .result-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .result-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .result-content {
+            font-family: monospace;
+            font-size: 14px;
+            color: #e2e8f0;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        .success-text { color: #4ade80 !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Descodificador Universal</h2>
+    <p class="hint">Pega cualquier texto cifrado o codificado (Base64 con inversión, texto al revés o formatos estándar) y esta herramienta intentará descifrarlo automáticamente probando varios métodos a la vez.</p>
+
+    <label for="inputCiphertext">Texto cifrado a analizar:</label>
+    <textarea id="inputCiphertext" rows="4" placeholder="Pega aquí el texto..."></textarea>
+
+    <button onclick="analizarYDescifrar()">Descifrar Automáticamente</button>
+
+    <div class="results-section">
+        <label>Posibles resultados detectados:</label>
+        
+        <div class="result-card">
+            <div class="result-title">1. Método Inversión + Base64 (El de tu web anterior)</div>
+            <div id="res1" class="result-content success-text">Esperando texto...</div>
+        </div>
+
+        <div class="result-card">
+            <div class="result-title">2. Solo Base64 Estándar</div>
+            <div id="res2" class="result-content">Esperando texto...</div>
+        </div>
+
+        <div class="result-card">
+            <div class="result-title">3. Texto invertido simple (Al revés)</div>
+            <div id="res3" class="result-content">Esperando texto...</div>
+        </div>
+
+        <div class="result-card">
+            <div class="result-title">4. Conversión Hexadecimal</div>
+            <div id="res4" class="result-content">Esperando texto...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function analizarYDescifrar() {
+        let input = document.getElementById('inputCiphertext').value.trim();
+        
+        if (!input) {
+            document.getElementById('res1').innerText = "Por favor, introduce un texto.";
+            document.getElementById('res2').innerText = "-";
+            document.getElementById('res3').innerText = "-";
+            document.getElementById('res4').innerText = "-";
+            return;
+        }
+
+        // Método 1: Base64 + Invertido
+        try {
+            let decodedBytes = decodeURIComponent(escape(atob(input)));
+            let original = decodedBytes.split('').reverse().join('');
+            document.getElementById('res1').innerText = original;
+            document.getElementById('res1').className = "result-content success-text";
+        } catch (err) {
+            document.getElementById('res1').innerText = "[No compatible con este formato]";
+            document.getElementById('res1').className = "result-content";
+        }
+
+        // Método 2: Solo Base64
+        try {
+            let decodedOnly = decodeURIComponent(escape(atob(input)));
+            document.getElementById('res2').innerText = decodedOnly;
+        } catch (err) {
+            document.getElementById('res2').innerText = "[No es Base64 válido]";
+        }
+
+        // Método 3: Texto al revés
+        try {
+            let reversedText = input.split('').reverse().join('');
+            document.getElementById('res3').innerText = reversedText;
+        } catch (err) {
+            document.getElementById('res3').innerText = "[Error]";
+        }
+
+        // Método 4: Hexadecimal a Texto
+        try {
+            let hex = input.replace(/\\s+/g, '');
+            let str = '';
+            for (let i = 0; i < hex.length; i += 2) {
+                let v = parseInt(hex.substr(i, 2), 16);
+                if (!isNaN(v)) str += String.fromCharCode(v);
+            }
+            document.getElementById('res4').innerText = str ? str : "[No es Hexadecimal]";
+        } catch (err) {
+            document.getElementById('res4').innerText = "[Error]";
+        }
+    }
+</script>
+
+</body>
+</html>
+"""
+
+with open("descodificador.html", "w", encoding="utf-8") as f:
+    f.write(html_content)

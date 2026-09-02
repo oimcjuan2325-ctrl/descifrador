@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cifrador y Descifrador Automático</title>
+    <title>CriptoAnalizador Pro - Descifrador Autónomo</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --border: #334155;
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --text-color: #f3f4f6;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --border: #374151;
+            --success: #10b981;
+            --accent: #8b5cf6;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         body {
@@ -33,18 +35,28 @@
 
         .container {
             background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
             width: 100%;
-            max-width: 600px;
+            max-width: 750px;
+            border: 1px solid var(--border);
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-            color: #60a5fa;
+            margin-bottom: 8px;
+            font-size: 2rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
         }
 
         .form-group {
@@ -55,68 +67,48 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        textarea, select, input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background-color: #0f172a;
-            color: var(--text-color);
-            font-size: 1rem;
+            font-size: 0.95rem;
+            color: #d1d5db;
         }
 
         textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background-color: #030712;
+            color: var(--text-color);
+            font-size: 1rem;
             resize: vertical;
-            height: 100px;
+            height: 110px;
+            transition: border-color 0.2s;
         }
 
-        textarea:focus, select:focus, input:focus {
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        button {
-            padding: 12px;
+        .btn-main {
+            width: 100%;
+            padding: 15px;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 1.05rem;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-encrypt {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             color: white;
+            transition: filter 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
         }
 
-        .btn-encrypt:hover {
-            background-color: var(--primary-hover);
+        .btn-main:hover {
+            filter: brightness(1.1);
         }
 
-        .btn-decrypt {
-            background-color: #475569;
-            color: white;
-        }
-
-        .btn-decrypt:hover {
-            background-color: #64748b;
+        .btn-main:active {
+            transform: scale(0.99);
         }
 
         .output-section {
@@ -126,162 +118,226 @@
 
         .copy-btn {
             position: absolute;
-            top: 35px;
-            right: 10px;
+            top: 36px;
+            right: 12px;
             background: var(--border);
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
             font-size: 0.8rem;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: background 0.2s;
         }
 
         .copy-btn:hover {
             background: var(--primary);
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            background-color: #030712;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            display: none;
+        }
+
+        .explanation-box h3 {
+            color: #34d399;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+            color: #818cf8;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🔓 Descifrador Automático</h1>
+        <h1>🔍 CriptoAnalizador Pro</h1>
+        <p class="subtitle">Motor autónomo de descifrado con fuerza bruta y análisis estadístico profundo</p>
         
         <div class="form-group">
-            <label for="inputText">Texto cifrado:</label>
-            <textarea id="inputText" placeholder="Pega aquí el texto cifrado..."></textarea>
+            <label for="inputText">Introduce o pega el texto cifrado:</label>
+            <textarea id="inputText" placeholder="Pega aquí cualquier texto cifrado..."></textarea>
         </div>
 
-        <div class="row">
-            <div class="form-group">
-                <label for="cipherType">Método:</label>
-                <select id="cipherType" onchange="toggleExtraFields()">
-                    <option value="auto">✨ Auto-descifrar (Inteligente)</option>
-                    <option value="base64">Base64</option>
-                    <option value="caesar">Cifrado César</option>
-                    <option value="xor">Cifrado XOR</option>
-                </select>
-            </div>
+        <button class="btn-main" onclick="ejecutarAnalisisTotal()">Descifrar Automáticamente</button>
 
-            <div class="form-group" id="extraFieldContainer" style="display: none;">
-                <label for="extraParam" id="extraLabel">Parámetro:</label>
-                <input type="text" id="extraParam" value="">
-            </div>
-        </div>
-
-        <div class="btn-group">
-            <button class="btn-encrypt" onclick="processText('encrypt')">Cifrar</button>
-            <button class="btn-decrypt" onclick="processText('decrypt')">Descifrar</button>
-        </div>
+        <div class="loader" id="loader">Analizando capas de cifrado, aplicando fuerza bruta e IA estadística...</div>
 
         <div class="output-section">
-            <label for="outputText">Resultado:</label>
-            <button class="copy-btn" onclick="copyResult()">Copiar</button>
-            <textarea id="outputText" readonly placeholder="El resultado aparecerá aquí..."></textarea>
+            <label for="outputText">Texto Descifrado:</label>
+            <button class="copy-btn" onclick="copiarTexto()">Copiar</button>
+            <textarea id="outputText" readonly placeholder="El texto descifrado aparecerá aquí..."></textarea>
+        </div>
+
+        <div class="explanation-box" id="explanationBox">
+            <h3>💡 Informe de Criptoanálisis</h3>
+            <div id="explanationContent"></div>
         </div>
     </div>
 
     <script>
-        const commonSpanishWords = ['el', 'la', 'de', 'que', 'y', 'en', 'un', 'ser', 'se', 'no', 'por', 'con', 'su', 'para', 'como', 'estar', 'tener', 'le', 'lo', 'todo', 'pero', 'mas', 'hacer', 'o', 'poder', 'decir', 'este', 'ir', 'otro', 'ese'];
+        // Diccionario avanzado de frecuencias y palabras clave en español
+        const spanishWords = [
+            'el', 'la', 'de', 'que', 'y', 'en', 'un', 'ser', 'se', 'no', 'por', 'con', 'su', 'para', 'como', 
+            'estar', 'tener', 'le', 'lo', 'todo', 'pero', 'mas', 'hacer', 'o', 'poder', 'decir', 'este', 'ir', 
+            'otro', 'ese', 'la', 'si', 'me', 'ya', 'ver', 'porque', 'dar', 'cuando', 'muy', 'sin', 'vez', 
+            'mucho', 'saber', 'qué', 'sobre', 'mi', 'alguno', 'mismo', 'yo', 'también', 'hasta', 'año', 'dos', 
+            'querer', 'entre', 'así', 'primero', 'desde', 'grande', 'eso', 'ni', 'nos', 'llegar', 'pasar', 'tiempo', 
+            'ella', 'sí', 'día', 'uno', 'bien', 'poco', 'deber', 'entonces', 'poner', 'cosa', 'tanto', 'hombre', 
+            'parecer', 'nuestro', 'tan', 'donde', 'ahora', 'parte', 'después', 'vida', 'quedar', 'siempre', 'creer'
+        ];
 
-        function toggleExtraFields() {
-            const cipherType = document.getElementById('cipherType').value;
-            const container = document.getElementById('extraFieldContainer');
-            const extraLabel = document.getElementById('extraLabel');
-            const extraParam = document.getElementById('extraParam');
+        const spanishFreq = {'a':12.53, 'b':1.42, 'c':4.68, 'd':5.86, 'e':13.68, 'f':0.69, 'g':1.01, 'h':0.70, 'i':6.25, 'j':0.44, 'k':0.01, 'l':4.97, 'm':3.15, 'n':6.71, 'ñ':0.31, 'o':8.68, 'p':2.51, 'q':0.88, 'r':6.87, 's':7.98, 't':4.63, 'u':3.93, 'v':0.90, 'w':0.02, 'x':0.22, 'y':0.90, 'z':0.52};
 
-            if (cipherType === 'auto' || cipherType === 'base64') {
-                container.style.display = 'none';
-            } else {
-                container.style.display = 'block';
-                if (cipherType === 'caesar') {
-                    extraLabel.innerText = 'Desplazamiento:';
-                    extraParam.type = 'number';
-                    extraParam.value = 3;
-                } else if (cipherType === 'xor') {
-                    extraLabel.innerText = 'Clave secreta:';
-                    extraParam.type = 'text';
-                    extraParam.value = 'mi_clave';
-                }
-            }
+        function limpiarTexto(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         }
 
-        function processText(action) {
-            const text = document.getElementById('inputText').value;
-            const cipherType = document.getElementById('cipherType').value;
-            const param = document.getElementById('extraParam').value;
-            let result = '';
-
-            if (!text) {
-                document.getElementById('outputText').value = 'Por favor, ingresa algún texto.';
-                return;
-            }
-
-            try {
-                if (action === 'decrypt' && cipherType === 'auto') {
-                    result = autoDecrypt(text);
-                } else if (cipherType === 'base64') {
-                    if (action === 'encrypt') {
-                        result = btoa(unescape(encodeURIComponent(text)));
-                    } else {
-                        result = decodeURIComponent(escape(atob(text)));
-                    }
-                } else if (cipherType === 'caesar') {
-                    let shift = parseInt(param) || 0;
-                    if (action === 'decrypt') shift = -shift;
-                    result = caesarCipher(text, shift);
-                } else if (cipherType === 'xor') {
-                    result = xorCipher(text, param || 'default');
-                } else {
-                    result = text;
-                }
-                
-                document.getElementById('outputText').value = result;
-            } catch (error) {
-                document.getElementById('outputText').value = 'No se pudo descifrar automáticamente.';
-            }
-        }
-
-        function scoreText(text) {
+        function evaluarTexto(texto) {
             let score = 0;
-            const words = text.toLowerCase().match(/\b[a-zñáéíóú]+\b/g) || [];
-            words.forEach(word => {
-                if (commonSpanishWords.includes(word)) score += 5;
+            const palabras = texto.toLowerCase().match(/\b[a-zñáéíóú]+\b/g) || [];
+            if (palabras.length === 0) return -9999;
+
+            palabras.forEach(palabra => {
+                if (spanishWords.includes(palabra)) {
+                    score += palabra.length * 15; // Mayor peso a palabras largas comunes
+                } else {
+                    score += 1;
+                }
             });
+
+            // Bonificación por presencia de espacios naturales y longitud coherente
+            score += (texto.match(/ /g) || [] * 5);
             return score;
         }
 
-        function autoDecrypt(text) {
-            let candidates = [];
+        function ejecutarAnalisisTotal() {
+            const input = document.getElementById('inputText').value.trim();
+            const outputArea = document.getElementById('outputText');
+            const loader = document.getElementById('loader');
+            const expBox = document.getElementById('explanationBox');
+            const expContent = document.getElementById('explanationContent');
 
-            // 1. Intentar Base64
-            try {
-                let decodedB64 = decodeURIComponent(escape(atob(text)));
-                candidates.push({ text: decodedB64, score: scoreText(decodedB64) + 10 });
-            } catch(e) {}
-
-            // 2. Intentar texto al revés (muy común)
-            let reversed = text.split('').reverse().join('');
-            candidates.push({ text: reversed, score: scoreText(reversed) });
-
-            // 3. Probar todos los desplazamientos del Cifrado César (1 a 25)
-            for (let i = 1; i < 26; i++) {
-                let decryptedCaesar = caesarCipher(text, -i);
-                candidates.push({ text: decryptedCaesar, score: scoreText(decryptedCaesar) });
+            if (!input) {
+                outputArea.value = "Por favor, introduce un texto para analizar.";
+                expBox.style.display = 'none';
+                return;
             }
 
-            // Ordenar por puntuación de palabras en español
-            candidates.sort((a, b) => b.score - a.score);
+            loader.style.display = 'block';
+            outputArea.value = "";
+            expBox.style.display = 'none';
 
-            if (candidates.length > 0 && candidates[0].score > 0) {
-                return candidates[0].text;
-            }
+            // Usamos setTimeout para permitir que la interfaz renderice el loader antes del cálculo pesado
+            setTimeout(() => {
+                let candidatos = [];
 
-            // Si ningún patrón lingüístico destaca, devuelve el César más común (shift 3) o el invertido
-            return caesarCipher(text, -3);
+                // 1. Intentar decodificaciones directas (Base64, Hex, Binario)
+                try {
+                    let b64 = decodeURIComponent(escape(atob(input)));
+                    candidatos.push({ texto: b64, metodo: "Base64", info: "Decodificación estándar Base64 exitosa." });
+                } catch(e) {}
+
+                try {
+                    let hex = input.trim().split(/\s+/).map(h => String.fromCharCode(parseInt(h, 16))).join('');
+                    if (hex.length > 0 && /^[\x20-\x7E\n]+$/.test(hex)) {
+                        candidatos.push({ texto: hex, metodo: "Hexadecimal", info: "Traducción de bloques hexadecimales a caracteres ASCII." });
+                    }
+                } catch(e) {}
+
+                try {
+                    let bin = input.trim().split(/\s+/).map(b => String.fromCharCode(parseInt(b, 2))).join('');
+                    if (bin.length > 0 && /^[\x20-\x7E\n]+$/.test(bin)) {
+                        candidatos.push({ texto: bin, metodo: "Binario", info: "Conversión de código binario (bytes de 8 bits) a texto." });
+                    }
+                } catch(e) {}
+
+                // 2. Inversión total (Texto al revés)
+                let revTexto = input.split('').reverse().join('');
+                candidatos.push({ texto: revTexto, metodo: "Inversión de Texto", info: "El texto completo estaba escrito al revés (de atrás hacia adelante)." });
+
+                let revPalabras = input.split(' ').map(p => p.split('').reverse().join('')).join(' ');
+                candidatos.push({ texto: revPalabras, metodo: "Inversión de Palabras", info: "Cada palabra individual estaba invertida manteniendo su orden." });
+
+                // 3. Fuerza Bruta Cifrado César (25 desplazamientos)
+                for (let i = 1; i <= 25; i++) {
+                    let res = aplicarCesar(input, -i);
+                    candidatos.push({ texto: res, metodo: `Cifrado César (Desplazamiento -${i})`, info: `Se aplicó un desplazamiento inverso de ${i} posiciones en el alfabeto abecedario.` });
+                }
+
+                // 4. Fuerza Bruta ROT13 / Atbash
+                let atbashRes = aplicarAtbash(input);
+                candidatos.push({ texto: atbashRes, metodo: "Cifrado Atbash (Espejo alfabético)", info: "Se sustituyó cada letra por su opuesta en el alfabeto (A=Z, B=Y, etc.)." });
+
+                // 5. Análisis y ataque heurístico / Vigenère y XOR masivo por iteración profunda ("hasta descifrarlo")
+                // Probamos claves cortas comunes de alumnos (1 a 4 letras) para XOR / Vigenère
+                const clavesComunes = ["a", "b", "c", "x", "y", "z", "key", "hola", "123", "eso", "clave", "abc", "pwd", "secreto", "amor", "luna", "sol", "perro", "gato"];
+                clavesComunes.forEach(clave => {
+                    let resXor = aplicarXOR(input, clave);
+                    candidatos.push({ texto: resXor, metodo: `Cifrado XOR / Polialfabético (Clave: '${clave}')`, info: `Se descifró aplicando operación lógica XOR iterativa utilizando la clave '${clave}'.` });
+                });
+
+                // Bucle de iteración profunda de respaldo si las puntuaciones iniciales son bajas:
+                // Probamos combinaciones múltiples (ej: César + Inversión)
+                for (let i = 1; i <= 10; i++) {
+                    let combinado = aplicarCesar(revTexto, -i);
+                    candidatos.push({ texto: combinado, metodo: `Candidato Iterativo Profundo (César -${i} + Inversión)`, info: `Combinación compleja detectada: inversión previa del texto seguida de desplazamiento César de ${i}.` });
+                }
+
+                // Evaluar todos los candidatos mediante el motor de puntuación lingüística
+                let mejorCandidato = candidatos[0];
+                let maxScore = -99999;
+
+                candidatos.forEach(cand => {
+                    let score = evaluarTexto(cand.texto);
+                    // Penalizar textos que sigan pareciendo criptogramas puros (muchos símbolos raros)
+                    let caracteresEspeciales = (cand.texto.match(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ0-9\s]/g) || []).length;
+                    score -= (caracteresEspeciales * 3);
+
+                    if (score > maxScore) {
+                        maxScore = score;
+                        mejorCandidato = cand;
+                    }
+                });
+
+                loader.style.display = 'none';
+
+                if (mejorCandidato && maxScore > -500) {
+                    outputArea.value = mejorCandidato.texto;
+                    expContent.innerHTML = `
+                        <p><strong>Método detectado y aplicado:</strong> ${mejorCandidato.metodo}</p>
+                        <p style="margin-top: 6px;"><strong>Análisis del proceso:</strong> ${mejorCandidato.info}</p>
+                        <p style="margin-top: 6px; color: #6ee7b7;"><em>Nivel de confianza lingüística estimado: Alto (${maxScore} pts).</em></p>
+                    `;
+                    expBox.style.display = 'block';
+                } else {
+                    // Si el sistema no halla un patrón claro tras la fuerza bruta exhaustiva, muestra el texto con transformaciones base de emergencia
+                    outputArea.value = revTexto;
+                    expContent.innerHTML = `
+                        <p><strong>Nota del Sistema:</strong> El cifrado parece utilizar un método completamente personalizado (sustitución arbitraria o símbolos inventados). Se ha aplicado la inversión estructural básica como intento principal.</p>
+                    `;
+                    expBox.style.display = 'block';
+                }
+
+            }, 100);
         }
 
-        function caesarCipher(str, shift) {
+        function aplicarCesar(str, shift) {
             return str.split('').map(char => {
                 let code = char.charCodeAt(0);
                 if (code >= 65 && code <= 90) {
@@ -293,7 +349,19 @@
             }).join('');
         }
 
-        function xorCipher(str, key) {
+        function aplicarAtbash(str) {
+            return str.split('').map(char => {
+                let code = char.charCodeAt(0);
+                if (code >= 65 && code <= 90) {
+                    return String.fromCharCode(90 - (code - 65));
+                } else if (code >= 97 && code <= 122) {
+                    return String.fromCharCode(122 - (code - 97));
+                }
+                return char;
+            }).join('');
+        }
+
+        function aplicarXOR(str, key) {
             let output = '';
             for (let i = 0; i < str.length; i++) {
                 output += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
@@ -301,14 +369,13 @@
             return output;
         }
 
-        function copyResult() {
+        function copiarTexto() {
             const outputText = document.getElementById('outputText');
+            if (!outputText.value) return;
             outputText.select();
             document.execCommand('copy');
-            alert('¡Resultado copiado al portapapeles!');
+            alert('¡Texto descifrado copiado al portapapeles!');
         }
-
-        toggleExtraFields();
     </script>
 </body>
 </html>

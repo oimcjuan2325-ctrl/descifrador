@@ -1,198 +1,276 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descodificador Universal de Textos</title>
+    <title>Cifrador y Descifrador de Textos</title>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --border: #334155;
+            --success: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
         .container {
-            max-width: 700px;
-            margin: 40px auto;
-            background: #1e293b;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border: 1px solid #334155;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
         }
-        h2 {
-            color: #38bdf8;
-            margin-top: 0;
-            border-left: 4px solid #38bdf8;
-            padding-left: 12px;
-            font-size: 24px;
-        }
-        p.hint {
-            color: #94a3b8;
-            font-size: 14px;
+
+        h1 {
+            text-align: center;
             margin-bottom: 20px;
-            line-height: 1.5;
+            font-size: 1.8rem;
+            color: #60a5fa;
         }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         label {
-            font-weight: 600;
             display: block;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #cbd5e1;
-        }
-        textarea {
-            width: 100%;
-            padding: 14px;
-            margin-top: 8px;
-            background: #0f172a;
-            border: 1px solid #475569;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: monospace;
-            color: #f8fafc;
-            resize: vertical;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: #38bdf8;
-        }
-        button {
-            background-color: #0284c7;
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            margin-top: 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
+            margin-bottom: 8px;
             font-weight: 600;
-            transition: background 0.2s;
+            font-size: 0.9rem;
         }
-        button:hover { background-color: #0369a1; }
-        .results-section {
+
+        textarea, select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: #0f172a;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        textarea:focus, select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             margin-top: 25px;
         }
-        .result-card {
-            background: #0f172a;
-            border: 1px solid #334155;
-            padding: 14px;
+
+        button {
+            padding: 12px;
+            border: none;
             border-radius: 8px;
-            margin-top: 10px;
-        }
-        .result-title {
-            font-size: 12px;
+            font-size: 1rem;
             font-weight: bold;
-            color: #38bdf8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-        .result-content {
-            font-family: monospace;
-            font-size: 14px;
-            color: #e2e8f0;
-            word-break: break-all;
-            white-space: pre-wrap;
+
+        .btn-encrypt {
+            background-color: var(--primary);
+            color: white;
         }
-        .success-text { color: #4ade80 !important; }
+
+        .btn-encrypt:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-decrypt {
+            background-color: #475569;
+            color: white;
+        }
+
+        .btn-decrypt:hover {
+            background-color: #64748b;
+        }
+
+        .output-section {
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 35px;
+            right: 10px;
+            background: var(--border);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Descodificador Universal</h2>
-    <p class="hint">Pega cualquier texto cifrado o codificado (Base64 con inversión, texto al revés o formatos estándar) y esta herramienta intentará descifrarlo automáticamente probando varios métodos a la vez.</p>
-
-    <label for="inputCiphertext">Texto cifrado a analizar:</label>
-    <textarea id="inputCiphertext" rows="4" placeholder="Pega aquí el texto..."></textarea>
-
-    <button onclick="analizarYDescifrar()">Descifrar Automáticamente</button>
-
-    <div class="results-section">
-        <label>Posibles resultados detectados:</label>
+    <div class="container">
+        <h1>🔐 Cifrador Web</h1>
         
-        <div class="result-card">
-            <div class="result-title">1. Método Inversión + Base64 (El de tu web anterior)</div>
-            <div id="res1" class="result-content success-text">Esperando texto...</div>
+        <div class="form-group">
+            <label for="inputText">Texto de entrada:</label>
+            <textarea id="inputText" placeholder="Escribe tu texto aquí..."></textarea>
         </div>
 
-        <div class="result-card">
-            <div class="result-title">2. Solo Base64 Estándar</div>
-            <div id="res2" class="result-content">Esperando texto...</div>
+        <div class="row">
+            <div class="form-group">
+                <label for="cipherType">Método de cifrado:</label>
+                <select id="cipherType" onchange="toggleExtraFields()">
+                    <option value="base64">Base64 (Codificación)</option>
+                    <option value="caesar">Cifrado César</option>
+                    <option value="xor">Cifrado XOR (Clave)</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="extraFieldContainer">
+                <label for="extraParam" id="extraLabel">Desplazamiento (César):</label>
+                <input type="number" id="extraParam" value="3">
+            </div>
         </div>
 
-        <div class="result-card">
-            <div class="result-title">3. Texto invertido simple (Al revés)</div>
-            <div id="res3" class="result-content">Esperando texto...</div>
+        <div class="btn-group">
+            <button class="btn-encrypt" onclick="processText('encrypt')">Cifrar</button>
+            <button class="btn-decrypt" onclick="processText('decrypt')">Descifrar</button>
         </div>
 
-        <div class="result-card">
-            <div class="result-title">4. Conversión Hexadecimal</div>
-            <div id="res4" class="result-content">Esperando texto...</div>
+        <div class="output-section">
+            <label for="outputText">Resultado:</label>
+            <button class="copy-btn" onclick="copyResult()">Copiar</button>
+            <textarea id="outputText" readonly placeholder="El resultado aparecerá aquí..."></textarea>
         </div>
     </div>
-</div>
 
-<script>
-    function analizarYDescifrar() {
-        let input = document.getElementById('inputCiphertext').value.trim();
-        
-        if (!input) {
-            document.getElementById('res1').innerText = "Por favor, introduce un texto.";
-            document.getElementById('res2').innerText = "-";
-            document.getElementById('res3').innerText = "-";
-            document.getElementById('res4').innerText = "-";
-            return;
-        }
+    <script>
+        function toggleExtraFields() {
+            const cipherType = document.getElementById('cipherType').value;
+            const extraLabel = document.getElementById('extraLabel');
+            const extraParam = document.getElementById('extraParam');
+            const container = document.getElementById('extraFieldContainer');
 
-        // Método 1: Base64 + Invertido
-        try {
-            let decodedBytes = decodeURIComponent(escape(atob(input)));
-            let original = decodedBytes.split('').reverse().join('');
-            document.getElementById('res1').innerText = original;
-            document.getElementById('res1').className = "result-content success-text";
-        } catch (err) {
-            document.getElementById('res1').innerText = "[No compatible con este formato]";
-            document.getElementById('res1').className = "result-content";
-        }
-
-        // Método 2: Solo Base64
-        try {
-            let decodedOnly = decodeURIComponent(escape(atob(input)));
-            document.getElementById('res2').innerText = decodedOnly;
-        } catch (err) {
-            document.getElementById('res2').innerText = "[No es Base64 válido]";
-        }
-
-        // Método 3: Texto al revés
-        try {
-            let reversedText = input.split('').reverse().join('');
-            document.getElementById('res3').innerText = reversedText;
-        } catch (err) {
-            document.getElementById('res3').innerText = "[Error]";
-        }
-
-        // Método 4: Hexadecimal a Texto
-        try {
-            let hex = input.replace(/\\s+/g, '');
-            let str = '';
-            for (let i = 0; i < hex.length; i += 2) {
-                let v = parseInt(hex.substr(i, 2), 16);
-                if (!isNaN(v)) str += String.fromCharCode(v);
+            if (cipherType === 'base64') {
+                container.style.display = 'none';
+            } else {
+                container.style.display = 'block';
+                if (cipherType === 'caesar') {
+                    extraLabel.innerText = 'Desplazamiento (Número):';
+                    extraParam.type = 'number';
+                    extraParam.value = 3;
+                } else if (cipherType === 'xor') {
+                    extraLabel.innerText = 'Clave secreta (Texto):';
+                    extraParam.type = 'text';
+                    extraParam.value = 'mi_clave';
+                }
             }
-            document.getElementById('res4').innerText = str ? str : "[No es Hexadecimal]";
-        } catch (err) {
-            document.getElementById('res4').innerText = "[Error]";
         }
-    }
-</script>
 
+        function processText(action) {
+            const text = document.getElementById('inputText').value;
+            const cipherType = document.getElementById('cipherType').value;
+            const param = document.getElementById('extraParam').value;
+            let result = '';
+
+            if (!text) {
+                document.getElementById('outputText').value = 'Por favor, ingresa algún texto.';
+                return;
+            }
+
+            try {
+                if (cipherType === 'base64') {
+                    if (action === 'encrypt') {
+                        result = btoa(unescape(encodeURIComponent(text)));
+                    } else {
+                        result = decodeURIComponent(escape(atob(text)));
+                    }
+                } 
+                else if (cipherType === 'caesar') {
+                    let shift = parseInt(param) || 0;
+                    if (action === 'decrypt') shift = -shift;
+                    result = caesarCipher(text, shift);
+                } 
+                else if (cipherType === 'xor') {
+                    let key = param || 'default';
+                    result = xorCipher(text, key);
+                }
+                
+                document.getElementById('outputText').value = result;
+            } catch (error) {
+                document.getElementById('outputText').value = 'Error: Entrada no válida para descifrar.';
+            }
+        }
+
+        function caesarCipher(str, shift) {
+            return str.split('').map(char => {
+                let code = char.charCodeAt(0);
+                // Mayúsculas
+                if (code >= 65 && code <= 90) {
+                    return String.fromCharCode(((code - 65 + shift) % 26 + 26) % 26 + 65);
+                }
+                // Minúsculas
+                else if (code >= 97 && code <= 122) {
+                    return String.fromCharCode(((code - 97 + shift) % 26 + 26) % 26 + 97);
+                }
+                return char;
+            }).join('');
+        }
+
+        function xorCipher(str, key) {
+            let output = '';
+            for (let i = 0; i < str.length; i++) {
+                output += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+            }
+            return output;
+        }
+
+        function copyResult() {
+            const outputText = document.getElementById('outputText');
+            outputText.select();
+            document.execCommand('copy');
+            alert('¡Resultado copiado al portapapeles!');
+        }
+
+        // Inicializar vista
+        toggleExtraFields();
+    </script>
 </body>
 </html>
-"""
-
-with open("descodificador.html", "w", encoding="utf-8") as f:
-    f.write(html_content)

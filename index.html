@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cifrador y Descifrador de Textos</title>
+    <title>Cifrador y Descifrador Automático</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -12,7 +12,6 @@
             --primary: #3b82f6;
             --primary-hover: #2563eb;
             --border: #334155;
-            --success: #22c55e;
         }
 
         * {
@@ -146,26 +145,27 @@
 <body>
 
     <div class="container">
-        <h1>🔐 Cifrador Web</h1>
+        <h1>🔓 Descifrador Automático</h1>
         
         <div class="form-group">
-            <label for="inputText">Texto de entrada:</label>
-            <textarea id="inputText" placeholder="Escribe tu texto aquí..."></textarea>
+            <label for="inputText">Texto cifrado:</label>
+            <textarea id="inputText" placeholder="Pega aquí el texto cifrado..."></textarea>
         </div>
 
         <div class="row">
             <div class="form-group">
-                <label for="cipherType">Método de cifrado:</label>
+                <label for="cipherType">Método:</label>
                 <select id="cipherType" onchange="toggleExtraFields()">
-                    <option value="base64">Base64 (Codificación)</option>
+                    <option value="auto">✨ Auto-descifrar (Inteligente)</option>
+                    <option value="base64">Base64</option>
                     <option value="caesar">Cifrado César</option>
-                    <option value="xor">Cifrado XOR (Clave)</option>
+                    <option value="xor">Cifrado XOR</option>
                 </select>
             </div>
 
-            <div class="form-group" id="extraFieldContainer">
-                <label for="extraParam" id="extraLabel">Desplazamiento (César):</label>
-                <input type="number" id="extraParam" value="3">
+            <div class="form-group" id="extraFieldContainer" style="display: none;">
+                <label for="extraParam" id="extraLabel">Parámetro:</label>
+                <input type="text" id="extraParam" value="">
             </div>
         </div>
 
@@ -182,22 +182,24 @@
     </div>
 
     <script>
+        const commonSpanishWords = ['el', 'la', 'de', 'que', 'y', 'en', 'un', 'ser', 'se', 'no', 'por', 'con', 'su', 'para', 'como', 'estar', 'tener', 'le', 'lo', 'todo', 'pero', 'mas', 'hacer', 'o', 'poder', 'decir', 'este', 'ir', 'otro', 'ese'];
+
         function toggleExtraFields() {
             const cipherType = document.getElementById('cipherType').value;
+            const container = document.getElementById('extraFieldContainer');
             const extraLabel = document.getElementById('extraLabel');
             const extraParam = document.getElementById('extraParam');
-            const container = document.getElementById('extraFieldContainer');
 
-            if (cipherType === 'base64') {
+            if (cipherType === 'auto' || cipherType === 'base64') {
                 container.style.display = 'none';
             } else {
                 container.style.display = 'block';
                 if (cipherType === 'caesar') {
-                    extraLabel.innerText = 'Desplazamiento (Número):';
+                    extraLabel.innerText = 'Desplazamiento:';
                     extraParam.type = 'number';
                     extraParam.value = 3;
                 } else if (cipherType === 'xor') {
-                    extraLabel.innerText = 'Clave secreta (Texto):';
+                    extraLabel.innerText = 'Clave secreta:';
                     extraParam.type = 'text';
                     extraParam.value = 'mi_clave';
                 }
@@ -216,38 +218,75 @@
             }
 
             try {
-                if (cipherType === 'base64') {
+                if (action === 'decrypt' && cipherType === 'auto') {
+                    result = autoDecrypt(text);
+                } else if (cipherType === 'base64') {
                     if (action === 'encrypt') {
                         result = btoa(unescape(encodeURIComponent(text)));
                     } else {
                         result = decodeURIComponent(escape(atob(text)));
                     }
-                } 
-                else if (cipherType === 'caesar') {
+                } else if (cipherType === 'caesar') {
                     let shift = parseInt(param) || 0;
                     if (action === 'decrypt') shift = -shift;
                     result = caesarCipher(text, shift);
-                } 
-                else if (cipherType === 'xor') {
-                    let key = param || 'default';
-                    result = xorCipher(text, key);
+                } else if (cipherType === 'xor') {
+                    result = xorCipher(text, param || 'default');
+                } else {
+                    result = text;
                 }
                 
                 document.getElementById('outputText').value = result;
             } catch (error) {
-                document.getElementById('outputText').value = 'Error: Entrada no válida para descifrar.';
+                document.getElementById('outputText').value = 'No se pudo descifrar automáticamente.';
             }
+        }
+
+        function scoreText(text) {
+            let score = 0;
+            const words = text.toLowerCase().match(/\b[a-zñáéíóú]+\b/g) || [];
+            words.forEach(word => {
+                if (commonSpanishWords.includes(word)) score += 5;
+            });
+            return score;
+        }
+
+        function autoDecrypt(text) {
+            let candidates = [];
+
+            // 1. Intentar Base64
+            try {
+                let decodedB64 = decodeURIComponent(escape(atob(text)));
+                candidates.push({ text: decodedB64, score: scoreText(decodedB64) + 10 });
+            } catch(e) {}
+
+            // 2. Intentar texto al revés (muy común)
+            let reversed = text.split('').reverse().join('');
+            candidates.push({ text: reversed, score: scoreText(reversed) });
+
+            // 3. Probar todos los desplazamientos del Cifrado César (1 a 25)
+            for (let i = 1; i < 26; i++) {
+                let decryptedCaesar = caesarCipher(text, -i);
+                candidates.push({ text: decryptedCaesar, score: scoreText(decryptedCaesar) });
+            }
+
+            // Ordenar por puntuación de palabras en español
+            candidates.sort((a, b) => b.score - a.score);
+
+            if (candidates.length > 0 && candidates[0].score > 0) {
+                return candidates[0].text;
+            }
+
+            // Si ningún patrón lingüístico destaca, devuelve el César más común (shift 3) o el invertido
+            return caesarCipher(text, -3);
         }
 
         function caesarCipher(str, shift) {
             return str.split('').map(char => {
                 let code = char.charCodeAt(0);
-                // Mayúsculas
                 if (code >= 65 && code <= 90) {
                     return String.fromCharCode(((code - 65 + shift) % 26 + 26) % 26 + 65);
-                }
-                // Minúsculas
-                else if (code >= 97 && code <= 122) {
+                } else if (code >= 97 && code <= 122) {
                     return String.fromCharCode(((code - 97 + shift) % 26 + 26) % 26 + 97);
                 }
                 return char;
@@ -269,7 +308,6 @@
             alert('¡Resultado copiado al portapapeles!');
         }
 
-        // Inicializar vista
         toggleExtraFields();
     </script>
 </body>

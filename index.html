@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoAI // Core Criptográfico Inteligente</title>
+    <title>CryptoAI Neural Engine v6.0</title>
     <style>
         :root {
-            --bg-base: #030712;
-            --panel-bg: #0b0f19;
-            --border-color: #1e293b;
-            --accent-purple: #8b5cf6;
-            --accent-cyan: #06b6d4;
-            --accent-green: #10b981;
-            --text-main: #f8fafc;
-            --text-muted: #64748b;
+            --bg: #05050a;
+            --panel: #0d0f1a;
+            --border: #1e2238;
+            --accent: #8b5cf6;
+            --cyan: #06b6d4;
+            --green: #10b981;
+            --text: #f1f5f9;
+            --muted: #64748b;
         }
 
         * {
@@ -24,172 +24,178 @@
         }
 
         body {
-            background-color: var(--bg-base);
-            color: var(--text-main);
+            background-color: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             padding: 20px;
         }
 
-        .terminal-container {
+        .terminal {
             width: 100%;
-            max-width: 900px;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 0 35px rgba(139, 92, 246, 0.08);
+            max-width: 950px;
+            background-color: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
             overflow: hidden;
-            margin-top: 20px;
         }
 
-        .terminal-header {
-            background-color: #0f172a;
-            padding: 12px 20px;
+        .header {
+            background-color: #090b13;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border);
         }
 
-        .terminal-title {
+        .title {
             font-size: 0.85rem;
-            color: var(--accent-purple);
-            letter-spacing: 1px;
+            color: var(--accent);
+            letter-spacing: 1.5px;
             font-weight: bold;
         }
 
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px var(--accent-green);
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--muted);
         }
 
-        .terminal-body {
+        .dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--green);
+        }
+
+        .body {
             padding: 25px;
         }
 
-        .io-grid {
+        .grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
         }
 
         @media (min-width: 768px) {
-            .io-grid {
+            .grid {
                 grid-template-columns: 1fr 1fr;
             }
         }
 
-        .panel-box {
+        .group {
             display: flex;
             flex-direction: column;
         }
 
         label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 0.75rem;
+            color: var(--muted);
             margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         textarea {
             width: 100%;
-            height: 140px;
-            background-color: #020617;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--accent-cyan);
-            padding: 12px;
+            height: 130px;
+            background-color: #030408;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--cyan);
+            padding: 14px;
             font-size: 0.95rem;
             resize: vertical;
         }
 
         textarea:focus {
             outline: none;
-            border-color: var(--accent-purple);
+            border-color: var(--accent);
         }
 
-        .btn-execute {
+        .btn {
             grid-column: 1 / -1;
-            background-color: transparent;
-            border: 1px solid var(--accent-purple);
-            color: var(--accent-purple);
-            padding: 14px;
+            background: linear-gradient(135deg, var(--accent), #6366f1);
+            border: none;
+            color: white;
+            padding: 16px;
             font-weight: bold;
             font-size: 0.95rem;
             letter-spacing: 1px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             text-transform: uppercase;
-            transition: all 0.2s ease;
+            transition: opacity 0.2s;
             margin-top: 10px;
         }
 
-        .btn-execute:hover {
-            background-color: var(--accent-purple);
-            color: var(--bg-base);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        .btn:hover {
+            opacity: 0.9;
         }
 
-        .ai-log {
+        .report {
             margin-top: 25px;
-            background-color: #020617;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 15px;
+            background-color: #030408;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px;
             font-size: 0.85rem;
             display: none;
         }
 
-        .ai-log-title {
-            color: var(--accent-purple);
-            margin-bottom: 8px;
-            border-bottom: 1px dashed var(--border-color);
-            padding-bottom: 4px;
+        .report-title {
+            color: var(--accent);
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 6px;
             font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
-        .log-content {
+        .report-content {
             color: #94a3b8;
             line-height: 1.6;
         }
 
-        .action-row {
+        .actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-top: 15px;
         }
 
-        .btn-sub {
+        .sub-btn {
             flex: 1;
-            background: #0f172a;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px;
+            background: #0d0f1a;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px;
             font-size: 0.8rem;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: border-color 0.2s;
         }
 
-        .btn-sub:hover {
-            border-color: var(--accent-cyan);
+        .sub-btn:hover {
+            border-color: var(--cyan);
         }
 
-        .spinner {
+        .loading {
             display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid rgba(139, 92, 246, 0.3);
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            border-top-color: var(--accent-purple);
-            animation: spin 0.8s ease infinite;
-            margin-right: 6px;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
         }
 
         @keyframes spin {
@@ -199,166 +205,178 @@
 </head>
 <body>
 
-    <div class="terminal-container">
-        <div class="terminal-header">
-            <span class="terminal-title">CRYPTO-AI // NEURAL CRYPTOANALYST v5.1</span>
-            <div>
-                <span style="font-size: 0.75rem; color: var(--text-muted); margin-right: 8px;">ESTADO NEURONAL</span>
-                <span class="status-dot"></span>
+    <div class="terminal">
+        <div class="header">
+            <span class="title">CRYPTO-AI // NEURAL ENGINE 6.0</span>
+            <div class="status">
+                <span>ESTADO: ACTIVO</span>
+                <span class="dot"></span>
             </div>
         </div>
 
-        <div class="terminal-body">
-            <div class="io-grid">
-                <div class="panel-box">
-                    <label for="inputPayload">Payload Cifrado de Entrada</label>
-                    <textarea id="inputPayload" placeholder="Introduce el criptograma o texto cifrado..."></textarea>
+        <div class="body">
+            <div class="grid">
+                <div class="group">
+                    <label for="inputData">Texto Cifrado de Entrada</label>
+                    <textarea id="inputData" placeholder="Introduce el criptograma..."></textarea>
                 </div>
 
-                <div class="panel-box">
-                    <label for="outputPayload">Output de Texto Claro (Resuelto por IA)</label>
-                    <textarea id="outputPayload" readonly placeholder="La IA descifrará el flujo de datos aquí..."></textarea>
+                <div class="group">
+                    <label for="outputData">Texto Claro Descifrado por IA</label>
+                    <textarea id="outputData" readonly placeholder="El resultado limpio aparecerá aquí..."></textarea>
                 </div>
 
-                <button class="btn-execute" id="btnRun" onclick="ejecutarAnalisisIA()">ACTIVAR IA CRIPTOANALISTA</button>
+                <button class="btn" id="runBtn" onclick="resolverConIA()">EJECUTAR MOTOR IA EXPERTO</button>
             </div>
 
-            <div class="ai-log" id="logSection">
-                <div class="ai-log-title">🧠 ANÁLISIS EXPERTO Y EXPLICACIÓN DEL ALGORITMO</div>
-                <div class="log-content" id="logContent"></div>
-                <div class="action-row">
-                    <button class="btn-sub" onclick="copiarOutput()">Copiar Output</button>
-                    <button class="btn-sub" onclick="ciclarHipotesisIA()">🔄 Probar siguiente hipótesis de la IA</button>
+            <div class="report" id="reportSection">
+                <div class="report-title">🧠 ANÁLISIS EXPERTO Y DIAGNÓSTICO DE LA IA</div>
+                <div class="report-content" id="reportContent"></div>
+                <div class="actions">
+                    <button class="sub-btn" onclick="copiarTexto()">Copiar Texto Claro</button>
+                    <button class="sub-btn" onclick="siguienteHipotesis()">🔄 Probar siguiente hipótesis</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const diccionarioEspanol = ['el', 'la', 'de', 'que', 'y', 'en', 'un', 'es', 'se', 'no', 'por', 'con', 'su', 'para', 'como', 'estar', 'tener', 'le', 'lo', 'todo', 'pero', 'mas', 'hacer', 'o', 'poder', 'decir', 'este', 'ir', 'otro', 'ese', 'si', 'me', 'ya', 'ver', 'porque', 'dar', 'cuando', 'muy', 'sin', 'vez', 'mucho', 'saber', 'sobre', 'mi', 'alguno', 'mismo', 'yo', 'también', 'hasta', 'año', 'dos', 'querer', 'entre', 'así', 'primero', 'desde', 'grande', 'eso', 'ni', 'nos', 'llegar', 'pasar', 'tiempo', 'ella', 'sí', 'día', 'uno', 'bien', 'poco', 'deber', 'entonces', 'poner', 'cosa', 'tanto', 'hombre', 'parecer', 'nuestro', 'tan', 'donde', 'ahora', 'parte', 'después', 'vida', 'quedar', 'siempre', 'creer', 'hola', 'mensaje', 'secreto', 'prueba', 'examen', 'clase', 'instituto', 'profesor', 'alumno'];
+        const diccionarioEspanol = [
+            'el', 'la', 'de', 'que', 'y', 'en', 'un', 'ser', 'se', 'no', 'por', 'con', 'su', 'para', 'como', 
+            'estar', 'tener', 'le', 'lo', 'todo', 'pero', 'mas', 'hacer', 'o', 'poder', 'decir', 'este', 'ir', 
+            'otro', 'ese', 'si', 'me', 'ya', 'ver', 'porque', 'dar', 'cuando', 'muy', 'sin', 'vez', 'mucho', 
+            'saber', 'sobre', 'mi', 'alguno', 'mismo', 'yo', 'también', 'hasta', 'año', 'dos', 'querer', 'entre', 
+            'así', 'primero', 'desde', 'grande', 'eso', 'ni', 'nos', 'llegar', 'pasar', 'tiempo', 'ella', 'sí', 
+            'día', 'uno', 'bien', 'poco', 'deber', 'entonces', 'poner', 'cosa', 'tanto', 'hombre', 'parecer', 
+            'nuestro', 'tan', 'donde', 'ahora', 'parte', 'después', 'vida', 'quedar', 'siempre', 'creer', 'hola', 
+            'mensaje', 'secreto', 'prueba', 'examen', 'clase', 'instituto', 'profesor', 'alumno', 'esto', 'es', 'un'
+        ];
 
-        let memoriaNeural = [];
-        let punteroNeural = 0;
+        let memoriaCandidatos = [];
+        let cursorHipotesis = 0;
 
-        function calcularIndiceCoherencia(texto) {
+        function evaluarCalidadTexto(texto) {
             let score = 0;
-            const palabras = texto.toLowerCase().match(/\b[a-zñáéíóú]+\b/g) || [];
-            if (palabras.length === 0) return -9999;
+            // Limpiar y extraer palabras individuales ignorando mayúsculas y acentos
+            const palabras = texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/\b[a-zñ]+\b/g) || [];
+            if (palabras.length === 0) return -99999;
 
             palabras.forEach(palabra => {
                 if (diccionarioEspanol.includes(palabra)) {
-                    score += palabra.length * 50; 
+                    score += palabra.length * 100; // Fuerte incentivo para palabras reales en español
                 } else {
-                    score -= 15; 
+                    score -= 50; // Fuerte penalización si contiene términos extraños o en inglés
                 }
             });
-            score += (texto.match(/ /g) || []).length * 20;
+
+            // Bonificación por presencia estructural de espacios
+            score += (texto.match(/ /g) || []).length * 30;
             return score;
         }
 
-        function motorNeuronalCripto(input) {
-            let hipotesis = [];
+        function generarMatrizIA(input) {
+            let candidatos = [];
 
-            // 1. Detección y análisis exhaustivo de Cifrado César (1 a 25)
+            // 1. Barrido exhaustivo de Cifrado César (1 a 25)
             for (let i = 1; i <= 25; i++) {
-                let res = aplicarCesar(input, -i);
-                hipotesis.push({
-                    texto: res,
-                    metodo: "Cifrado César (Sustitución por desplazamiento)",
-                    explicacion: `La IA detectó una permutación alfabética por rotación. Aplicó un desplazamiento inverso de ${i} posiciones para alinear el vector de caracteres con las frecuencias del idioma español.`
+                let descifrado = aplicarCesar(input, -i);
+                candidatos.push({
+                    texto: descifrado,
+                    metodo: `Cifrado César (Desplazamiento inverso -${i})`,
+                    explicacion: `La IA detectó una rotación alfabética clásica. Aplicó un desplazamiento inverso de ${i} posiciones para alinear la distribución de letras con las frecuencias naturales del idioma castellano.`
                 });
             }
 
-            // 2. Análisis de Base64
+            // 2. Decodificación Base64
             try {
-                let decB64 = decodeURIComponent(escape(atob(input)));
-                hipotesis.push({
+                let decB64 = decodeURIComponent(escape(atob(input.trim())));
+                candidatos.push({
                     texto: decB64,
-                    metodo: "Codificación Estándar Base64",
-                    explicacion: "La IA identificó una estructura de representación binaria a texto ASCII en bloques de 6 bits, realizando una decodificación directa."
+                    metodo: "Codificación Base64",
+                    explicacion: "La IA identificó una estructura de codificación estándar Base64 y la tradujo directamente a texto plano."
                 });
             } catch(e) {}
 
-            // 3. Inversiones Estructurales (Muy usado en entornos escolares)
-            let revCompleto = input.split('').reverse().join('');
-            hipotesis.push({
-                texto: revCompleto,
+            // 3. Inversiones Estructurales
+            let revTotal = input.split('').reverse().join('');
+            candidatos.push({
+                texto: revTotal,
                 metodo: "Espejo Estructural Global",
-                explicacion: "La IA analizó una simetría inversa total, determinando que el emisor escribió la cadena completa de atrás hacia adelante."
+                explicacion: "La red neuronal determinó que el emisor redactó la cadena completa de atrás hacia adelante."
             });
 
             let revPalabras = input.split(' ').map(p => p.split('').reverse().join('')).join(' ');
-            hipotesis.push({
+            candidatos.push({
                 texto: revPalabras,
                 metodo: "Inversión Léxica de Componentes",
-                explicacion: "La red neuronal evaluó una inversión simétrica aplicada individualmente a cada token o palabra separada por espacios."
+                explicacion: "La IA evaluó una inversión simétrica aplicada individualmente a cada token o palabra separada por espacios."
             });
 
             // 4. Cifrado Atbash
             let atbash = aplicarAtbash(input);
-            hipotesis.push({
+            candidatos.push({
                 texto: atbash,
                 metodo: "Cifrado Espejo Atbash",
-                explicacion: "La IA aplicó una sustitución especular del abecedario hebreo clásico (intercambiando A por Z, B por Y, etc.)."
+                explicacion: "La IA aplicó la sustitución especular del alfabeto (A=Z, B=Y, etc.)."
             });
 
-            // 5. Cifrado XOR heurístico con claves cortas comunes
-            const clavesComunes = ["a", "b", "c", "x", "y", "z", "key", "hola", "123", "eso", "clave", "abc", "pwd", "secreto", "amor", "luna"];
-            clavesComunes.forEach(clave => {
+            // 5. Cifrado XOR con claves comunes
+            const claves = ["a", "b", "c", "x", "y", "z", "key", "hola", "123", "eso", "clave", "abc", "pwd", "secreto", "amor", "luna"];
+            claves.forEach(clave => {
                 let xorRes = aplicarXOR(input, clave);
-                hipotesis.push({
+                candidatos.push({
                     texto: xorRes,
-                    metodo: `Cifrado de Máscara Binaria XOR (Clave: '${clave}')`,
-                    explicacion: `La IA ejecutó un ataque por fuerza bruta con clave corta ('${clave}'), aplicando la operación lógica bit a bit (XOR) para revertir la codificación.`
+                    metodo: `Cifrado XOR Heurístico (Clave: '${clave}')`,
+                    explicacion: `La IA aplicó un ataque con clave corta ('${clave}') mediante operación lógica XOR para retirar la máscara de bits.`
                 });
             });
 
-            // Ordenar por coherencia lingüística estricta usando el evaluador neuronal
-            hipotesis.sort((a, b) => calcularIndiceCoherencia(b.texto) - calcularIndiceCoherencia(a.texto));
-            return hipotesis;
+            // Ordenar estrictamente de mayor a menor según la puntuación del idioma español
+            candidatos.sort((a, b) => evaluarCalidadTexto(b.texto) - evaluarCalidadTexto(a.texto));
+            return candidatos;
         }
 
-        function ejecutarAnalisisIA() {
-            const input = document.getElementById('inputPayload').value.trim();
-            const btn = document.getElementById('btnRun');
-            
+        function resolverConIA() {
+            const input = document.getElementById('inputData').value.trim();
+            const btn = document.getElementById('runBtn');
+
             if (!input) {
-                alert("Error: Ingrese un criptograma válido para que la IA lo procese.");
+                alert("Por favor, introduce un texto cifrado.");
                 return;
             }
 
-            btn.innerHTML = '<span class="spinner"></span>Analizando patrones y red neuronal...';
+            btn.innerHTML = '<span class="loading"></span>IA analizando semántica y patrones...';
             btn.disabled = true;
 
             setTimeout(() => {
-                memoriaNeural = motorNeuronalCripto(input);
-                punteroNeural = 0;
-                renderizarRazonamientoIA();
-                
-                btn.innerHTML = 'ACTIVAR IA CRIPTOANALISTA';
+                memoriaCandidatos = generarMatrizIA(input);
+                cursorHipotesis = 0;
+                mostrarResultadoActual();
+
+                btn.innerHTML = 'EJECUTAR MOTOR IA EXPERTO';
                 btn.disabled = false;
-            }, 300);
+            }, 250);
         }
 
-        function renderizarRazonamientoIA() {
-            if (memoriaNeural.length === 0) return;
+        function mostrarResultadoActual() {
+            if (memoriaCandidatos.length === 0) return;
 
-            const actual = memoriaNeural[punteroNeural];
-            document.getElementById('outputPayload').value = actual.texto;
+            const actual = memoriaCandidatos[cursorHipotesis];
+            document.getElementById('outputData').value = actual.texto;
 
-            const logContent = document.getElementById('logContent');
-            logContent.innerHTML = `
-                <div style="margin-bottom: 6px;"><strong>ALGORITMO IDENTIFICADO:</strong> ${actual.metodo}</div>
-                <div><strong>EXPLICACIÓN PASO A PASO:</strong> ${actual.explicacion}</div>
-                <div style="margin-top: 8px; color: var(--accent-green);"><strong>HIPÓTESIS NEURONAL:</strong> Mostrando opción ${punteroNeural + 1} de ${memoriaNeural.length} evaluadas.</div>
+            const content = document.getElementById('reportContent');
+            content.innerHTML = `
+                <div style="margin-bottom: 6px;"><strong>MÉTODO DETECTADO:</strong> ${actual.metodo}</div>
+                <div><strong>EXPLICACIÓN DE LA IA:</strong> ${actual.explicacion}</div>
+                <div style="margin-top: 8px; color: var(--green);"><strong>ESTADO:</strong> Mostrando hipótesis ${cursorHipotesis + 1} de ${memoriaCandidatos.length} evaluadas.</div>
             `;
-            document.getElementById('logSection').style.display = 'block';
+            document.getElementById('reportSection').style.display = 'block';
         }
 
-        function ciclarHipotesisIA() {
-            if (memoriaNeural.length === 0) return;
-            punteroNeural = (punteroNeural + 1) % memoriaNeural.length;
-            renderizarRazonamientoIA();
+        function siguienteHipotesis() {
+            if (memoriaCandidatos.length === 0) return;
+            cursorHipotesis = (cursorHipotesis + 1) % memoriaCandidatos.length;
+            mostrarResultadoActual();
         }
 
         function aplicarCesar(str, shift) {
@@ -390,12 +408,12 @@
             return output;
         }
 
-        function copiarOutput() {
-            const output = document.getElementById('outputPayload');
+        function copiarTexto() {
+            const output = document.getElementById('outputData');
             if (!output.value) return;
             output.select();
             document.execCommand('copy');
-            alert('Texto plano copiado al portapapeles.');
+            alert('¡Texto claro copiado al portapapeles!');
         }
     </script>
 </body>
